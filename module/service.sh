@@ -8,11 +8,6 @@ MODDIR="/data/adb/modules/ksu_toolkit"
 KSUDIR="/data/adb/ksu"
 PACKAGES_LIST="/data/system/packages.list"
 
-if [ -f "$KSUDIR/.uname" ] && grep -qE "RELEASE=|VERSION=" "$KSUDIR/.uname"; then
-	. "$KSUDIR/.uname"
-	"$MODDIR/toolkit" --fkuname "$RELEASE" "$VERSION" > /dev/null 2>&1
-fi
-
 if [ -f "$KSUDIR/.manager_uid" ]; then
 	uid=$(head -n1 "$KSUDIR/.manager_uid")
 
