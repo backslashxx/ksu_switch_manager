@@ -1,7 +1,7 @@
 #include <linux/utsname.h>
 
-#define N_ITERATIONS 1000000
-#define N_ITERATIONS_DIGITS 7
+#define N_ITERATIONS 500000
+#define N_ITERATIONS_DIGITS 6
 
 const char extra_lines[] = 
 	"[!] tests:\n"
@@ -117,16 +117,19 @@ __attribute__((noinline))
 static void run_bench(long sc, long a1, long a2, long a3, long a4, long a5, long a6, bool track, char *template)
 {
 	uint64_t t0, t1;
-	long i = 0;
+	uint_fast32_t i;
 
+	__sync_synchronize();
 	t0 = time_now_ns();
-bench_start:
-	__syscall(sc, a1, a2, a3, a4, a5, a6);
-	i++;
-	if (i < N_ITERATIONS)
-		goto bench_start;
+
+	// duh
+	#pragma nounroll
+	for (i = 0; i < N_ITERATIONS; i++)
+		__syscall(sc, a1, a2, a3, a4, a5, a6);
 
 	t1 = time_now_ns();
+	__sync_synchronize();
+
 	print_out(box_template, sizeof(box_template) - 1 );
 	print_out(template, strlen(template));
 	dumb_itoa((t1 - t0) / N_ITERATIONS, 7, result_template + 1);
