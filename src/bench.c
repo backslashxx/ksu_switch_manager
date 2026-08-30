@@ -239,7 +239,15 @@ static int bench_main(char **argv)
 
 	const int num_tests = sizeof(tests) / sizeof(tests[0]);
 
-	int j = 0;
+	int j;
+
+	// warm-up
+	volatile unsigned long dummy __attribute__((uninitialized));
+	#pragma nounroll
+	for (j = 0; j < 50000; j++)
+		dummy = dummy + j;
+	
+	j = 0;	
 
 start_loop:
 	box_template[1] = 49 + j; // off by one, array starts with 0, humans count with 1
